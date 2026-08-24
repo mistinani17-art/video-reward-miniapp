@@ -1,1 +1,292 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#090014">
+<title>Video Reward - Telegram Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#08000f;--card:#130523;--card2:#1b0730;--purple:#7c2cff;
+  --purple2:#a855f7;--pink:#ec4899;--text:#fff;--muted:#a99bb8;
+  --green:#22c55e;--red:#ef4444;--gold:#ffd43b;--border:rgba(168,85,247,.28)
+}
+html,body{margin:0;padding:0;background:radial-gradient(circle at top,#21043c 0,#08000f 42%,#050008 100%);color:var(--text);font-family:Arial,sans-serif;min-height:100%;-webkit-tap-highlight-color:transparent}
+body{padding-bottom:82px}
+button,input,select{font:inherit}
+button{border:0;cursor:pointer}
+.app{max-width:520px;margin:auto;padding:12px 12px 0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 12px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#6d20ff,#bf36ff);display:grid;place-items:center;font-size:23px;box-shadow:0 0 22px rgba(139,43,255,.55)}
+.brand h1{font-size:18px;margin:0}.brand small{display:block;color:var(--muted);margin-top:2px}
+.icon-btn{width:40px;height:40px;border-radius:12px;background:var(--card);color:white;border:1px solid var(--border)}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#26064d,#0e031b);border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:0 0 25px rgba(122,44,255,.13)}
+.userline{display:flex;align-items:center;gap:12px}
+.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff8a00,#ff3d81);display:grid;place-items:center;font-size:21px;font-weight:bold}
+.welcome{font-weight:700}.username{color:var(--muted);font-size:12px;margin-top:4px}
+.level{margin-left:auto;background:#24104b;border:1px solid #6d3bc5;padding:7px 9px;border-radius:10px;font-size:11px;color:#d9c8ff}
+.balance-card{margin-top:16px;background:linear-gradient(135deg,#21063e,#140525);border:1px solid var(--border);border-radius:16px;padding:16px}
+.balance-label{color:#bbaec9;font-size:12px}.balance-row{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.balance{font-size:31px;font-weight:800}.coins{color:var(--gold);font-size:13px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.primary,.secondary{padding:12px;border-radius:11px;font-weight:700}.primary{background:linear-gradient(90deg,#6d1fff,#a82cff);color:#fff}.secondary{background:#210a3b;color:#ddd;border:1px solid var(--border)}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 10px}.section-title h2{font-size:15px;margin:0}.section-title span{font-size:11px;color:#a99bb8}
+.banner{background:linear-gradient(135deg,#3c0b5e,#6d114e);border:1px solid rgba(236,72,153,.25);padding:15px;border-radius:15px;display:flex;justify-content:space-between;align-items:center}
+.banner strong{display:block;font-size:15px}.banner p{margin:5px 0 0;color:#dccde6;font-size:11px}
+.task{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);padding:12px;border-radius:13px;margin-bottom:9px}
+.task-icon{width:35px;height:35px;border-radius:10px;background:#2b0c50;display:grid;place-items:center}.task-info{flex:1}.task-info b{font-size:12px}.task-info small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.task button{background:#6d24ed;color:#fff;border-radius:9px;padding:8px 12px;font-size:11px;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px}.stat small{color:var(--muted);font-size:10px}.stat b{display:block;font-size:20px;margin-top:8px}
+.refbox{background:linear-gradient(135deg,#220644,#140522);border:1px solid var(--border);border-radius:17px;padding:16px}
+.refurl{background:#08000f;border:1px solid #3c1760;border-radius:10px;padding:12px;font-size:11px;word-break:break-all;color:#d9c9e9;margin:10px 0}
+.form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px;margin-top:12px}
+label{display:block;color:#b7a9c4;font-size:11px;margin:10px 0 6px}input,select{width:100%;background:#09000f;border:1px solid #3c1760;color:#fff;padding:12px;border-radius:10px;outline:none}
+.history{margin-top:12px}.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}.history-item:last-child{border-bottom:none}.history-item b{font-size:13px}.history-item small{color:var(--muted);font-size:10px}.history-item .plus{color:var(--green)}.history-item .minus{color:var(--red)}
+.profile-head{text-align:center;padding:18px}.bigavatar{width:74px;height:74px;margin:auto;border-radius:24px;background:linear-gradient(135deg,#7626ff,#ee3a91);display:grid;place-items:center;font-size:32px;font-weight:bold;margin-bottom:12px}
+.info{background:var(--card);border:1px solid var(--border);border-radius:15px;overflow:hidden}.info-row{display:flex;justify-content:space-between;padding:14px;border-bottom:1px solid rgba(255,255,255,.05)}.info-row span{color:var(--muted);font-size:12px}.info-row b{font-size:13px}
+.bottom{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);background:rgba(10,1,18,.96);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding-top:6px}
+.nav{background:transparent;color:#8f829e;font-size:10px;padding:4px 2px}.nav span{display:block;font-size:19px;margin-bottom:3px}.nav.active{color:#c179ff}.nav.active span{filter:drop-shadow(0 0 6px #a855f7)}
+.toast{position:fixed;z-index:50;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);opacity:0;background:#fff;color:#111;padding:11px 15px;border-radius:12px;font-size:12px;transition:.3s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;z-index:40;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end}.modal.show{display:flex}.sheet{width:min(520px,100%);margin:auto;background:#160625;border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px;max-height:80vh;overflow-y:auto}.sheet h3{margin:0 0 8px;font-size:16px}.sheet p{margin:0 0 15px;color:var(--muted);font-size:12px}.sheet-actions{display:flex;gap:10px;margin-top:15px}.sheet-actions button{flex:1;padding:10px;border-radius:9px;font-size:12px;font-weight:700}
+.empty{color:var(--muted);text-align:center;padding:20px;font-size:12px}
+.footer{text-align:center;color:#665c70;font-size:9px;margin:20px 0}
+@media(max-width:360px){.balance{font-size:27px}.brand h1{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="logo">🤖</div><div><h1>Video Reward</h1><small>Earn • Refer • Withdraw</small></div></div>
+    <button class="icon-btn" onclick="showNotice('Notifications','আপনার নতুন reward ও withdrawal update এখানে দেখানো যাবে।')">🔔</button>
+  </div>
 
+  <main id="home" class="page active">
+    <section class="hero">
+      <div class="userline">
+        <div class="avatar" id="avatar">U</div>
+        <div><div class="welcome" id="welcome">স্বাগতম!</div><div class="username" id="username">@User</div></div>
+        <div class="level">⭐ Level <span id="level">1</span></div>
+      </div>
+      <div class="balance-card">
+        <div class="balance-label">My Balance</div>
+        <div class="balance-row"><div class="balance" id="balance">0</div><div class="coins">🪙 Coins</div></div>
+        <div class="quick"><button class="primary" onclick="openPage('withdraw')">Withdraw</button><button class="secondary" onclick="openPage('earn')">Earn Coins</button></div>
+      </div>
+    </section>
+    <div class="section-title"><h2>🎁 Daily Bonus</h2><span>Every 24 hours</span></div>
+    <div class="banner"><div><strong>Claim your daily reward</strong><p>আজকের bonus নিন এবং earning চালিয়ে যান।</p></div><button class="primary" id="bonusBtn" onclick="claimBonus()">Claim 20 🪙</button></div>
+    <div class="section-title"><h2>⚡ Quick Tasks</h2><span>Earn more</span></div>
+    <div id="homeTasks"></div>
+  </main>
+
+  <main id="earn" class="page">
+    <div class="section-title"><h2>🎁 Earn Coins</h2><span>Complete tasks</span></div>
+    <div class="banner"><div><strong>📺 Watch Video & Earn</strong><p>ভিডিও সম্পূর্ণ দেখুন, তারপর Coin Claim করুন।</p></div><button class="primary" onclick="doTask('video')">Watch 📺</button></div>
+    <div class="section-title"><h2>📋 Tasks</h2><span id="taskCount">0 available</span></div>
+    <div id="tasks"></div>
+    <div class="footer">Task completion এবং reward validation production-এ server-side করা উচিত।</div>
+  </main>
+
+  <main id="referral" class="page">
+    <div class="section-title"><h2>👥 Refer & Earn</h2><span>Invite friends</span></div>
+    <div class="refbox">
+      <strong>আপনার Referral Link</strong>
+      <div class="refurl" id="refUrl">Generating...</div>
+      <button class="primary" style="width:100%" onclick="shareReferral()">✈️ Share Now</button>
+    </div>
+    <div class="section-title"><h2>Referral Stats</h2></div>
+    <div class="grid2"><div class="stat"><small>Total Referrals</small><b id="refCount">0</b></div><div class="stat"><small>Referral Earnings</small><b id="refEarn">0 🪙</b></div></div>
+    <div class="section-title"><h2>How it works</h2></div>
+    <div class="task"><div class="task-icon">1️⃣</div><div class="task-info"><b>Link share করুন</b><small>আপনার বন্ধুদের Telegram-এ invite করুন।</small></div></div>
+    <div class="task"><div class="task-icon">2️⃣</div><div class="task-info"><b>Friend joins</b><small>Friend bot/Mini App-এ join করলে referral count হবে।</small></div></div>
+    <div class="task"><div class="task-icon">3️⃣</div><div class="task-info"><b>Earn reward</b><small>Reward server-side verification-এর পরে credit হবে।</small></div></div>
+  </main>
+
+  <main id="withdraw" class="page">
+    <div class="section-title"><h2>💸 Withdraw</h2><span>Request payout</span></div>
+    <div class="balance-card"><div class="balance-label">Withdrawable Balance</div><div class="balance-row"><div class="balance" id="withdrawBalance">0</div><div class="coins">🪙 Coins</div></div></div>
+    <div class="form">
+      <label>Amount (Coins)</label><input id="amount" type="number" min="1" placeholder="Minimum 100 coins">
+      <label>Payment Method</label><select id="method"><option>Telegram</option><option>TRX</option><option>USDT</option></select>
+      <label>Payment Address / Username</label><input id="address" placeholder="@username or wallet address">
+      <button class="primary" style="width:100%;margin-top:14px" onclick="requestWithdraw()">Submit Withdrawal</button>
+    </div>
+    <div class="section-title"><h2>Transaction History</h2></div>
+    <div class="form history" id="history"></div>
+  </main>
+
+  <main id="profile" class="page">
+    <div class="profile-head"><div class="bigavatar" id="bigAvatar">U</div><h2 id="profileName" style="margin:10px 0 4px">User</h2><div class="username" id="profileUsername">@User</div></div>
+    <div class="info">
+      <div class="info-row"><span>Telegram ID</span><b id="profileId">—</b></div>
+      <div class="info-row"><span>Balance</span><b id="profileBalance">0 Coins</b></div>
+      <div class="info-row"><span>Level</span><b id="profileLevel">1</b></div>
+      <div class="info-row"><span>Total Earned</span><b id="totalEarned">0 Coins</b></div>
+    </div>
+    <button class="secondary" style="width:100%;margin-top:12px" onclick="showNotice('Account','Telegram Mini App-এর user identity Telegram SDK থেকে নেওয়া হচ্ছে। Real production-এ এটি server-side verify করা হবে।')">More Info</button>
+  </main>
+</div>
+
+<nav class="bottom">
+  <button class="nav active" data-page="home" onclick="openPage('home')"><span>🏠</span>Home</button>
+  <button class="nav" data-page="earn" onclick="openPage('earn')"><span>🎁</span>Earn</button>
+  <button class="nav" data-page="referral" onclick="openPage('referral')"><span>👥</span>Referral</button>
+  <button class="nav" data-page="withdraw" onclick="openPage('withdraw')"><span>💸</span>Withdraw</button>
+  <button class="nav" data-page="profile" onclick="openPage('profile')"><span>👤</span>Profile</button>
+</nav>
+
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+  <div class="sheet">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <div id="videoRewardBox"></div>
+    <div class="sheet-actions">
+      <button class="secondary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#08000f');tg.setBackgroundColor('#08000f')}catch(e){}}
+const user = tg?.initDataUnsafe?.user || null;
+const BOT_USERNAME = 'VideoRewardOfficialBot_bot';
+const KEY='video_reward_demo_v1';
+const defaultState={balance:0,totalEarned:0,referrals:0,refEarn:0,level:1,lastBonus:0,completed:{},history:[]};
+let state=loadState();
+
+function loadState(){try{return {...defaultState,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...defaultState}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function firstName(){return user?.first_name||'User'}
+function uid(){return user?.id||'demo_user'}
+function initials(){return (firstName()[0]||'U').toUpperCase()}
+function render(){
+ document.getElementById('welcome').textContent='স্বাগতম, '+firstName()+'!';
+ document.getElementById('username').textContent='@'+(user?.username||'User');
+ document.getElementById('avatar').textContent=initials();document.getElementById('bigAvatar').textContent=initials();
+ document.getElementById('balance').textContent=state.balance.toLocaleString();
+ document.getElementById('withdrawBalance').textContent=state.balance.toLocaleString();
+ document.getElementById('level').textContent=state.level;
+ document.getElementById('refCount').textContent=state.referrals;
+ document.getElementById('refEarn').textContent=state.refEarn.toLocaleString()+' 🪙';
+ document.getElementById('profileName').textContent=firstName();
+ document.getElementById('profileUsername').textContent='@'+(user?.username||'User');
+ document.getElementById('profileId').textContent=user?.id||'Demo mode';
+ document.getElementById('profileBalance').textContent=state.balance.toLocaleString()+' Coins';
+ document.getElementById('profileLevel').textContent=state.level;
+ document.getElementById('totalEarned').textContent=state.totalEarned.toLocaleString()+' Coins';
+ const ref='https://t.me/'+BOT_USERNAME+'?start=ref_'+uid();
+ document.getElementById('refUrl').textContent=ref;
+ const tasksHtml=tasks.map(t=>`<div class="task"><div class="task-icon">${t.icon}</div><div class="task-info"><b>${t.name}</b><small>Reward: ${t.reward} Coins</small></div><button onclick="doTask('${t.id}')">Do It</button></div>`).join('');
+ document.getElementById('tasks').innerHTML=tasksHtml;
+ document.getElementById('homeTasks').innerHTML=tasks.slice(0,3).map(t=>`<div class="task"><div class="task-icon">${t.icon}</div><div class="task-info"><b>${t.name}</b><small>+${t.reward} Coins</small></div><button onclick="doTask('${t.id}')">Do It</button></div>`).join('');
+ document.getElementById('taskCount').textContent=tasks.length+' available';
+ const canBonus=!state.lastBonus || Date.now()-state.lastBonus>=86400000;
+ document.getElementById('bonusBtn').disabled=!canBonus;
+ document.getElementById('bonusBtn').style.opacity=canBonus?'1':'.5';
+ renderHistory();
+}
+const tasks=[
+ {id:'channel',icon:'📣',name:'Join Channel',reward:100},
+ {id:'group',icon:'👥',name:'Join Group',reward:100},
+ {id:'bot',icon:'🤖',name:'Join Another Bot',reward:200},
+ {id:'daily',icon:'🎁',name:'Daily Bonus',reward:20},
+ {id:'video',icon:'📺',name:'Watch Video',reward:10}
+];
+function openPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function addCoins(amount,reason){
+ state.balance+=amount;state.totalEarned+=amount;
+ if(state.balance>=1000)state.level=2;
+ state.history.unshift({type:'plus',amount,reason,time:new Date().toLocaleString()});
+ save();toast('+'+amount+' Coins — '+reason);
+}
+function claimBonus(){
+ if(state.lastBonus && Date.now()-state.lastBonus<86400000){toast('আজকের bonus already claimed');return}
+ state.lastBonus=Date.now();addCoins(20,'Daily Bonus');
+}
+function doTask(id){
+ const t=tasks.find(x=>x.id===id);if(!t)return;
+ if(state.completed[id]){toast('এই task ইতিমধ্যে complete হয়েছে');return}
+ if(id==='video'){watchVideo();return}
+ state.completed[id]=true;addCoins(t.reward,t.name);
+}
+let videoTimer=null, videoSeconds=10, videoReward=10, videoWatching=false;
+function watchVideo(){
+ if(videoWatching){return}
+ videoWatching=true; videoSeconds=10;
+ document.getElementById('modalTitle').textContent='📺 Watch Video & Earn';
+ document.getElementById('modalText').innerHTML='';
+ const box=document.getElementById('videoRewardBox');
+ box.innerHTML=`
+   <div style="background:#08000f;border:1px solid #3c1760;border-radius:14px;padding:18px;text-align:center">
+     <div style="font-size:42px">▶️</div>
+     <div style="font-weight:700;margin:8px 0">Reward Video</div>
+     <div style="color:#a99bb8;font-size:11px;line-height:1.5">ভিডিও দেখার সময় শেষ না হওয়া পর্���ন্ত Claim button বন্ধ থাকবে।</div>
+     <div id="videoTimer" style="font-size:28px;font-weight:800;margin:15px 0;color:#ffd43b">10s</div>
+     <button id="claimVideoBtn" class="primary" style="width:100%;opacity:.5;cursor:default" disabled>🔒 Watch to Claim +10 Coins</button>
+   </div>`;
+ document.getElementById('modal').classList.add('show');
+
+ clearInterval(videoTimer);
+ videoTimer=setInterval(()=>{
+   videoSeconds--;
+   const timer=document.getElementById('videoTimer');
+   if(timer) timer.textContent=videoSeconds+'s';
+   if(videoSeconds<=0){
+     clearInterval(videoTimer); videoWatching=false;
+     const claim=document.getElementById('claimVideoBtn');
+     if(claim){
+       claim.disabled=false; claim.style.opacity='1'; claim.style.cursor='pointer';
+       claim.textContent='🎁 Claim +10 Coins';
+       claim.onclick=claimVideoReward;
+     }
+   }
+ },1000);
+}
+function claimVideoReward(){
+ const claim=document.getElementById('claimVideoBtn');
+ if(!claim || claim.disabled)return;
+ claim.disabled=true;
+ state.completed['video']=true;
+ addCoins(videoReward,'Video Watch Reward');
+ closeModal();
+}
+function requestWithdraw(){
+ const amount=Number(document.getElementById('amount').value);
+ const method=document.getElementById('method').value;
+ const address=document.getElementById('address').value.trim();
+ if(!amount||amount<100){toast('Minimum withdrawal 100 Coins');return}
+ if(amount>state.balance){toast('Insufficient balance');return}
+ if(!address){toast('Payment address দিন');return}
+ state.balance-=amount;
+ state.history.unshift({type:'minus',amount,reason:'Withdrawal — '+method,time:new Date().toLocaleString()});
+ save();document.getElementById('amount').value='';document.getElementById('address').value='';
+ showNotice('Withdrawal Submitted','আপনার '+amount+' Coins withdrawal request তৈরি হয়েছে। Production-এ এটি backend/admin approval-এর কাছে পাঠানো হবে।');
+}
+function renderHistory(){
+ const el=document.getElementById('history');
+ if(!state.history.length){el.innerHTML='<div class="empty">No transactions yet</div>';return}
+ el.innerHTML=state.history.slice(0,10).map(h=>`<div class="history-item"><div><b>${h.reason}</b><small>${h.time}</small></div><b class="${h.type==='plus'?'plus':'minus'}">${h.type==='plus'?'+':'-'}${h.amount}</b></div>`).join('');
+}
+function shareReferral(){
+ const url=document.getElementById('refUrl').textContent;
+ const share='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent('Join Video Reward and earn coins!');
+ if(tg?.openTelegramLink)tg.openTelegramLink(share);else window.open(share,'_blank');
+}
+function showNotice(title,text){document.getElementById('modalTitle').textContent=title;document.getElementById('modalText').textContent=text;document.getElementById('videoRewardBox').innerHTML='';document.getElementById('modal').classList.add('show')}
+function closeModal(){clearInterval(videoTimer);videoWatching=false;document.getElementById('modal').classList.remove('show')}
+let toastTimer;function toast(text){clearTimeout(toastTimer);const e=document.getElementById('toast');e.textContent=text;e.classList.add('show');toastTimer=setTimeout(()=>e.classList.remove('show'),2200)}
+render();
+</script>
+</body>
+</html>
